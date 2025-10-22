@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ExternalLink, Github, Filter } from 'lucide-react';
+import { ExternalLink, Github, Filter, Sparkles } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
@@ -11,10 +11,7 @@ const Projects = () => {
   const { projects } = siteData;
   const [selectedTag, setSelectedTag] = useState('All');
 
-  // Get all unique tags
   const allTags = ['All', ...new Set(projects.flatMap(p => p.tags))];
-
-  // Filter projects
   const filteredProjects = selectedTag === 'All' 
     ? projects 
     : projects.filter(p => p.tags.includes(selectedTag));
@@ -33,7 +30,7 @@ const Projects = () => {
   };
 
   return (
-    <section id="projects" className="min-h-screen px-6 py-20 bg-black">
+    <section id="projects" className="min-h-screen px-6 py-20 bg-gradient-to-b from-slate-950 to-slate-900">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -42,8 +39,11 @@ const Projects = () => {
           transition={{ duration: 0.6 }}
           className="mb-16"
         >
-          <h2 className="text-5xl md:text-6xl font-bold text-white mb-4">Projects</h2>
-          <p className="text-xl text-gray-500">Building innovative solutions</p>
+          <div className="flex items-center gap-3 mb-4">
+            <Sparkles className="h-8 w-8 text-cyan-400" />
+            <h2 className="text-5xl md:text-6xl font-bold font-heading bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">Projects</h2>
+          </div>
+          <p className="text-xl text-gray-400">Building innovative solutions with cutting-edge technology</p>
         </motion.div>
 
         {/* Filter Tags */}
@@ -53,7 +53,7 @@ const Projects = () => {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
         >
-          <Filter className="h-5 w-5 text-gray-500 mt-2" />
+          <Filter className="h-5 w-5 text-cyan-400 mt-2" />
           {allTags.map((tag) => (
             <Button
               key={tag}
@@ -61,8 +61,8 @@ const Projects = () => {
               size="sm"
               onClick={() => setSelectedTag(tag)}
               className={selectedTag === tag 
-                ? "bg-white text-black hover:bg-gray-200" 
-                : "border-gray-700 text-gray-400 hover:bg-gray-900"}
+                ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-white border-0 shadow-lg shadow-cyan-500/30" 
+                : "border-slate-700 text-gray-400 hover:bg-slate-800 hover:text-cyan-400 hover:border-cyan-500/50"}
             >
               {tag}
             </Button>
@@ -79,10 +79,10 @@ const Projects = () => {
         >
           {filteredProjects.map((project, idx) => (
             <motion.div key={idx} variants={itemVariants}>
-              <Card className="bg-zinc-900 border-zinc-800 hover:border-zinc-600 transition-all duration-300 h-full flex flex-col">
+              <Card className="bg-slate-800/50 border-slate-700/50 hover:border-cyan-500/50 transition-all duration-300 h-full flex flex-col backdrop-blur-sm group hover:shadow-xl hover:shadow-cyan-500/10">
                 <CardHeader>
-                  <CardTitle className="text-white text-2xl">{project.name}</CardTitle>
-                  <CardDescription className="text-gray-400 mt-2">
+                  <CardTitle className="text-white text-2xl font-heading group-hover:text-cyan-400 transition-colors duration-300">{project.name}</CardTitle>
+                  <CardDescription className="text-gray-400 mt-2 leading-relaxed">
                     {project.summary}
                   </CardDescription>
                 </CardHeader>
@@ -92,7 +92,7 @@ const Projects = () => {
                       <Badge 
                         key={techIdx} 
                         variant="outline" 
-                        className="border-zinc-700 text-gray-300"
+                        className="border-slate-600/50 text-gray-300 bg-slate-700/30 hover:border-cyan-500/50 hover:text-cyan-300 transition-all duration-200"
                       >
                         {tech}
                       </Badge>
@@ -105,24 +105,24 @@ const Projects = () => {
                       <Button 
                         variant="outline" 
                         size="sm"
-                        className="border-gray-700 text-white hover:bg-gray-800"
+                        className="border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 hover:border-cyan-500/50"
                       >
                         View Details
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="bg-zinc-900 border-zinc-800 text-white">
+                    <DialogContent className="bg-slate-900 border-slate-700 text-white">
                       <DialogHeader>
-                        <DialogTitle className="text-2xl">{project.name}</DialogTitle>
-                        <DialogDescription className="text-gray-400 text-base mt-4">
+                        <DialogTitle className="text-2xl font-heading bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">{project.name}</DialogTitle>
+                        <DialogDescription className="text-gray-400 text-base mt-4 leading-relaxed">
                           {project.summary}
                         </DialogDescription>
                       </DialogHeader>
                       <div className="space-y-4 mt-4">
                         <div>
-                          <h4 className="text-sm font-semibold mb-2 text-gray-300">Tech Stack</h4>
+                          <h4 className="text-sm font-semibold mb-3 text-cyan-400">Tech Stack</h4>
                           <div className="flex flex-wrap gap-2">
                             {project.stack.map((tech, i) => (
-                              <Badge key={i} variant="secondary" className="bg-zinc-800 text-gray-300">
+                              <Badge key={i} variant="secondary" className="bg-slate-800 text-gray-300 border border-slate-700">
                                 {tech}
                               </Badge>
                             ))}
@@ -130,7 +130,7 @@ const Projects = () => {
                         </div>
                         <div className="flex gap-3 pt-4">
                           {project.links.github !== '#' && (
-                            <Button variant="outline" size="sm" className="border-gray-700" asChild>
+                            <Button variant="outline" size="sm" className="border-slate-700 hover:border-cyan-500/50 hover:text-cyan-400" asChild>
                               <a href={project.links.github} target="_blank" rel="noopener noreferrer">
                                 <Github className="mr-2 h-4 w-4" />
                                 GitHub
@@ -138,7 +138,7 @@ const Projects = () => {
                             </Button>
                           )}
                           {project.links.live !== '#' && (
-                            <Button variant="outline" size="sm" className="border-gray-700" asChild>
+                            <Button variant="outline" size="sm" className="border-slate-700 hover:border-cyan-500/50 hover:text-cyan-400" asChild>
                               <a href={project.links.live} target="_blank" rel="noopener noreferrer">
                                 <ExternalLink className="mr-2 h-4 w-4" />
                                 Live Demo
@@ -153,7 +153,7 @@ const Projects = () => {
                     <Button 
                       variant="ghost" 
                       size="sm"
-                      className="text-gray-400 hover:text-white"
+                      className="text-gray-400 hover:text-cyan-400 hover:bg-slate-700/50"
                       asChild
                     >
                       <a href={project.links.github} target="_blank" rel="noopener noreferrer">
@@ -165,7 +165,7 @@ const Projects = () => {
                     <Button 
                       variant="ghost" 
                       size="sm"
-                      className="text-gray-400 hover:text-white"
+                      className="text-gray-400 hover:text-cyan-400 hover:bg-slate-700/50"
                       asChild
                     >
                       <a href={project.links.live} target="_blank" rel="noopener noreferrer">

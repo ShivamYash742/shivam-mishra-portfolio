@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Github, Linkedin, Mail, ArrowRight } from 'lucide-react';
+import { Github, Linkedin, Mail, ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from './ui/button';
 import { siteData } from '../content/siteData';
 
@@ -15,39 +15,56 @@ const Hero = () => {
   };
 
   return (
-    <section className="min-h-screen flex items-center justify-center px-6 py-20 bg-black">
-      <div className="max-w-5xl w-full">
+    <section className="min-h-screen flex items-center justify-center px-6 py-20 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+      </div>
+
+      <div className="max-w-5xl w-full relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="space-y-8"
         >
+          {/* Badge */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 backdrop-blur-sm"
+          >
+            <Sparkles className="h-4 w-4 text-cyan-400" />
+            <span className="text-sm text-cyan-300 font-medium">Available for opportunities</span>
+          </motion.div>
+
           {/* Name and Title */}
           <div className="space-y-4">
             <motion.h1 
-              className="text-6xl md:text-8xl font-bold text-white tracking-tight"
+              className="text-6xl md:text-8xl font-bold font-heading bg-gradient-to-r from-white via-cyan-100 to-blue-200 bg-clip-text text-transparent tracking-tight"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
             >
               {profile.name}
             </motion.h1>
             
             <motion.p 
-              className="text-xl md:text-2xl text-gray-400"
+              className="text-xl md:text-2xl text-gray-300 font-medium"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
             >
               {profile.title}
             </motion.p>
             
             <motion.p 
-              className="text-lg md:text-xl text-gray-500 max-w-2xl"
+              className="text-lg md:text-xl text-gray-400 max-w-2xl leading-relaxed"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
             >
               {profile.tagline}
             </motion.p>
@@ -58,11 +75,11 @@ const Hero = () => {
             className="flex flex-wrap gap-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
           >
             <Button 
               size="lg" 
-              className="bg-white text-black hover:bg-gray-200 transition-colors duration-300"
+              className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white border-0 shadow-lg shadow-cyan-500/50 transition-all duration-300"
               onClick={() => scrollToSection('projects')}
             >
               View Projects
@@ -71,10 +88,10 @@ const Hero = () => {
             <Button 
               size="lg" 
               variant="outline" 
-              className="border-gray-700 text-white hover:bg-gray-900 transition-colors duration-300"
+              className="border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/10 hover:border-cyan-500/50 transition-all duration-300"
               onClick={() => scrollToSection('contact')}
             >
-              Contact Me
+              Get In Touch
             </Button>
           </motion.div>
 
@@ -83,13 +100,13 @@ const Hero = () => {
             className="flex gap-6 pt-8"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
+            transition={{ duration: 0.6, delay: 0.7 }}
           >
             <a 
               href={profile.links.github} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-gray-500 hover:text-white transition-colors duration-300"
+              className="text-gray-400 hover:text-cyan-400 transition-colors duration-300 transform hover:scale-110"
               aria-label="GitHub"
             >
               <Github className="h-6 w-6" />
@@ -98,14 +115,14 @@ const Hero = () => {
               href={profile.links.linkedin} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-gray-500 hover:text-white transition-colors duration-300"
+              className="text-gray-400 hover:text-cyan-400 transition-colors duration-300 transform hover:scale-110"
               aria-label="LinkedIn"
             >
               <Linkedin className="h-6 w-6" />
             </a>
             <a 
               href={`mailto:${profile.email}`}
-              className="text-gray-500 hover:text-white transition-colors duration-300"
+              className="text-gray-400 hover:text-cyan-400 transition-colors duration-300 transform hover:scale-110"
               aria-label="Email"
             >
               <Mail className="h-6 w-6" />
