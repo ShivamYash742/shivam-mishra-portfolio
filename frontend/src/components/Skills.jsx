@@ -9,13 +9,13 @@ const Skills = () => {
   const { skills } = siteData;
 
   const skillCategories = [
-    { title: 'Languages', items: skills.languages, icon: Code2, color: 'cyan' },
-    { title: 'Frontend', items: skills.frontend, icon: Palette, color: 'blue' },
-    { title: 'Backend', items: skills.backend, icon: Server, color: 'violet' },
-    { title: 'Databases', items: skills.databases, icon: Database, color: 'emerald' },
-    { title: 'Version Control', items: skills.versionControl, icon: GitBranch, color: 'orange' },
-    { title: 'Authentication', items: skills.authentication, icon: Shield, color: 'rose' },
-    { title: 'ML Frameworks', items: skills.mlFrameworks, icon: Brain, color: 'purple' }
+    { title: 'Languages', items: skills.languages, icon: Code2, gradient: 'from-purple-500 to-pink-500', bgGradient: 'from-purple-100 to-pink-100' },
+    { title: 'Frontend', items: skills.frontend, icon: Palette, gradient: 'from-blue-500 to-cyan-500', bgGradient: 'from-blue-100 to-cyan-100' },
+    { title: 'Backend', items: skills.backend, icon: Server, gradient: 'from-green-500 to-emerald-500', bgGradient: 'from-green-100 to-emerald-100' },
+    { title: 'Databases', items: skills.databases, icon: Database, gradient: 'from-orange-500 to-red-500', bgGradient: 'from-orange-100 to-red-100' },
+    { title: 'Version Control', items: skills.versionControl, icon: GitBranch, gradient: 'from-indigo-500 to-purple-500', bgGradient: 'from-indigo-100 to-purple-100' },
+    { title: 'Authentication', items: skills.authentication, icon: Shield, gradient: 'from-pink-500 to-rose-500', bgGradient: 'from-pink-100 to-rose-100' },
+    { title: 'ML Frameworks', items: skills.mlFrameworks, icon: Brain, gradient: 'from-violet-500 to-fuchsia-500', bgGradient: 'from-violet-100 to-fuchsia-100' }
   ];
 
   const containerVariants = {
@@ -33,21 +33,8 @@ const Skills = () => {
     visible: { opacity: 1, y: 0 }
   };
 
-  const getIconColorClasses = (color) => {
-    const colors = {
-      cyan: 'text-cyan-400 bg-cyan-500/10',
-      blue: 'text-blue-400 bg-blue-500/10',
-      violet: 'text-violet-400 bg-violet-500/10',
-      emerald: 'text-emerald-400 bg-emerald-500/10',
-      orange: 'text-orange-400 bg-orange-500/10',
-      rose: 'text-rose-400 bg-rose-500/10',
-      purple: 'text-purple-400 bg-purple-500/10'
-    };
-    return colors[color] || colors.cyan;
-  };
-
   return (
-    <section id="skills" className="min-h-screen px-6 py-20 bg-slate-900">
+    <section id="skills" className="min-h-screen px-6 py-20 bg-gradient-to-b from-white to-purple-50">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -56,8 +43,8 @@ const Skills = () => {
           transition={{ duration: 0.6 }}
           className="mb-16"
         >
-          <h2 className="text-5xl md:text-6xl font-bold font-heading bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent mb-4">Skills</h2>
-          <p className="text-xl text-cyan-400 font-medium">Technical Proficiency</p>
+          <h2 className="text-5xl md:text-6xl font-bold font-heading bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">Skills</h2>
+          <p className="text-xl text-purple-600 font-semibold">Technical Proficiency</p>
         </motion.div>
 
         <motion.div
@@ -71,13 +58,13 @@ const Skills = () => {
             const Icon = category.icon;
             return (
               <motion.div key={idx} variants={itemVariants}>
-                <Card className="bg-slate-800/50 border-slate-700/50 hover:border-cyan-500/50 transition-all duration-300 backdrop-blur-sm group hover:shadow-lg hover:shadow-cyan-500/10">
+                <Card className={`bg-gradient-to-br ${category.bgGradient} border-2 border-transparent hover:border-purple-300 transition-all duration-300 group hover:shadow-2xl hover:scale-105`}>
                   <CardHeader>
                     <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg ${getIconColorClasses(category.color)} group-hover:scale-110 transition-transform duration-300`}>
-                        <Icon className="h-5 w-5" />
+                      <div className={`p-3 rounded-xl bg-gradient-to-br ${category.gradient} group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                        <Icon className="h-6 w-6 text-white" />
                       </div>
-                      <CardTitle className="text-white text-lg font-heading">{category.title}</CardTitle>
+                      <CardTitle className="text-gray-800 text-lg font-heading font-bold">{category.title}</CardTitle>
                     </div>
                   </CardHeader>
                   <CardContent>
@@ -86,7 +73,7 @@ const Skills = () => {
                         <Badge 
                           key={skillIdx} 
                           variant="secondary" 
-                          className="bg-slate-700/50 text-gray-300 hover:bg-slate-600/50 border border-slate-600/50 hover:border-cyan-500/50 transition-all duration-200"
+                          className="bg-white/80 text-gray-700 hover:bg-white border border-gray-200 hover:border-purple-300 transition-all duration-200 font-medium"
                         >
                           {skill}
                         </Badge>
