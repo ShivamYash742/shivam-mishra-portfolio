@@ -21,7 +21,7 @@ const Experience = () => {
   };
 
   return (
-    <section id="experience" className="min-h-screen px-6 py-20 bg-slate-900">
+    <section id="experience" className="min-h-screen px-6 py-20 bg-gradient-to-b from-blue-50 to-purple-50">
       <div className="max-w-5xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -30,8 +30,8 @@ const Experience = () => {
           transition={{ duration: 0.6 }}
           className="mb-16"
         >
-          <h2 className="text-5xl md:text-6xl font-bold font-heading bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent mb-4">Experience</h2>
-          <p className="text-xl text-cyan-400 font-medium">Professional journey</p>
+          <h2 className="text-5xl md:text-6xl font-bold font-heading bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">Experience</h2>
+          <p className="text-xl text-blue-600 font-semibold">Professional journey</p>
         </motion.div>
 
         <motion.div
@@ -39,26 +39,26 @@ const Experience = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="space-y-8 relative before:absolute before:left-0 before:top-0 before:bottom-0 before:w-0.5 before:bg-gradient-to-b before:from-cyan-500 before:via-blue-500 before:to-purple-500"
+          className="space-y-8 relative before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-gradient-to-b before:from-purple-500 before:via-pink-500 before:to-blue-500 before:rounded-full"
         >
           {experience.map((exp, idx) => (
             <motion.div
               key={idx}
               variants={itemVariants}
-              className="relative pl-8"
+              className="relative pl-10"
             >
               {/* Timeline dot */}
-              <div className="absolute left-0 top-6 w-3 h-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full -translate-x-[5px] shadow-lg shadow-cyan-500/50" />
+              <div className="absolute left-0 top-6 w-4 h-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full -translate-x-[6px] shadow-lg shadow-purple-500/50 ring-4 ring-white" />
               
-              <Card className="bg-slate-800/50 border-slate-700/50 hover:border-cyan-500/50 transition-all duration-300 backdrop-blur-sm group hover:shadow-lg hover:shadow-cyan-500/10">
+              <Card className="bg-gradient-to-br from-white to-purple-50/50 border-2 border-purple-200 hover:border-purple-400 transition-all duration-300 group hover:shadow-2xl hover:scale-105">
                 <CardHeader>
                   <div className="flex items-start justify-between gap-4 flex-wrap">
                     <div>
-                      <CardTitle className="text-white text-xl mb-1 font-heading group-hover:text-cyan-400 transition-colors duration-300">{exp.role}</CardTitle>
-                      <CardDescription className="text-cyan-400 font-medium">{exp.org}</CardDescription>
+                      <CardTitle className="text-gray-800 text-xl mb-1 font-heading group-hover:text-purple-600 transition-colors duration-300 font-bold">{exp.role}</CardTitle>
+                      <CardDescription className="text-purple-600 font-semibold text-base">{exp.org}</CardDescription>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-400 bg-slate-700/50 px-3 py-1.5 rounded-full border border-slate-600/50">
-                      <Calendar className="h-4 w-4 text-cyan-400" />
+                    <div className="flex items-center gap-2 text-sm text-gray-700 bg-gradient-to-r from-purple-100 to-pink-100 px-4 py-2 rounded-full border-2 border-purple-200 font-semibold">
+                      <Calendar className="h-4 w-4 text-purple-600" />
                       {exp.timeline}
                     </div>
                   </div>
@@ -66,8 +66,8 @@ const Experience = () => {
                 <CardContent>
                   <ul className="space-y-3">
                     {exp.highlights.map((highlight, hIdx) => (
-                      <li key={hIdx} className="text-gray-400 text-sm flex items-start gap-3 leading-relaxed">
-                        <span className="text-cyan-400 mt-1.5 text-lg">•</span>
+                      <li key={hIdx} className="text-gray-700 text-sm flex items-start gap-3 leading-relaxed font-medium">
+                        <span className="text-purple-500 mt-1.5 text-lg font-bold">•</span>
                         <span>{highlight}</span>
                       </li>
                     ))}

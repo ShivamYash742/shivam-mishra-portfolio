@@ -51,7 +51,7 @@ const Navigation = () => {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled ? 'bg-slate-950/80 backdrop-blur-lg border-b border-slate-800/50 shadow-lg shadow-cyan-500/5' : 'bg-transparent'
+          isScrolled ? 'bg-white/90 backdrop-blur-lg border-b-2 border-purple-200 shadow-lg' : 'bg-transparent'
         }`}
       >
         <div className="max-w-7xl mx-auto px-6 py-4">
@@ -59,7 +59,7 @@ const Navigation = () => {
             {/* Logo */}
             <button 
               onClick={() => scrollToSection('hero')}
-              className="text-white font-bold text-xl font-heading hover:text-cyan-400 transition-colors bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent"
+              className="text-2xl font-bold font-heading bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent hover:from-purple-700 hover:to-pink-700 transition-all"
             >
               SM
             </button>
@@ -70,15 +70,15 @@ const Navigation = () => {
                 <button
                   key={item.id}
                   onClick={() => scrollToSection(item.id)}
-                  className={`text-sm transition-all duration-300 font-medium relative ${
-                    activeSection === item.id ? 'text-cyan-400' : 'text-gray-400 hover:text-white'
+                  className={`text-sm transition-all duration-300 font-semibold relative ${
+                    activeSection === item.id ? 'text-purple-600' : 'text-gray-700 hover:text-purple-600'
                   }`}
                 >
                   {item.label}
                   {activeSection === item.id && (
                     <motion.div
                       layoutId="activeSection"
-                      className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-500 to-blue-500"
+                      className="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full"
                       transition={{ type: "spring", stiffness: 380, damping: 30 }}
                     />
                   )}
@@ -90,7 +90,7 @@ const Navigation = () => {
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden text-white hover:text-cyan-400 hover:bg-slate-800"
+              className="md:hidden text-purple-600 hover:text-purple-700 hover:bg-purple-100"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               {isMobileMenuOpen ? <X /> : <Menu />}
@@ -105,15 +105,15 @@ const Navigation = () => {
           initial={{ opacity: 0, x: '100%' }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: '100%' }}
-          className="fixed inset-0 z-40 bg-slate-950/95 backdrop-blur-lg md:hidden"
+          className="fixed inset-0 z-40 bg-gradient-to-br from-purple-50 to-pink-50 backdrop-blur-lg md:hidden"
         >
           <div className="flex flex-col items-center justify-center h-full gap-8">
             {navItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => scrollToSection(item.id)}
-                className={`text-2xl font-medium transition-colors duration-300 ${
-                  activeSection === item.id ? 'text-cyan-400' : 'text-white hover:text-cyan-400'
+                className={`text-2xl font-bold font-heading transition-colors duration-300 ${
+                  activeSection === item.id ? 'text-purple-600' : 'text-gray-700 hover:text-purple-600'
                 }`}
               >
                 {item.label}
