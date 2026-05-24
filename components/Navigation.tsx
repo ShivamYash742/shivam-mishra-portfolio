@@ -8,12 +8,33 @@ import clsx from 'clsx';
 export default function Navigation() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [active, setActive] = useState('');
+  const [active, setActive] = useState('#home');
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const sections = navLinks
+      .map((link) => document.querySelector(link.href))
+      .filter((el): el is Element => el !== null);
+
+    if (sections.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible) setActive(`#${visible.target.id}`);
+      },
+      { rootMargin: '-40% 0px -55% 0px', threshold: [0, 0.25, 0.5, 0.75, 1] }
+    );
+
+    sections.forEach((s) => observer.observe(s));
+    return () => observer.disconnect();
   }, []);
 
   return (
@@ -44,6 +65,7 @@ export default function Navigation() {
               key={link.href}
               href={link.href}
               onClick={() => setActive(link.href)}
+              aria-current={active === link.href ? 'page' : undefined}
               className={clsx(
                 'px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200',
                 active === link.href
@@ -65,6 +87,9 @@ export default function Navigation() {
           </a>
           <button
             onClick={() => setMenuOpen(!menuOpen)}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-nav"
             className="md:hidden text-slate-400 hover:text-white p-2"
           >
             {menuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -75,6 +100,7 @@ export default function Navigation() {
       <AnimatePresence>
         {menuOpen && (
           <motion.div
+            id="mobile-nav"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
@@ -86,7 +112,13 @@ export default function Navigation() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMenuOpen(false)}
-                  className="text-slate-300 hover:text-violet-400 py-2 text-sm font-medium transition-colors"
+                  aria-current={active === link.href ? 'page' : undefined}
+                  className={clsx(
+                    'py-2 text-sm font-medium transition-colors',
+                    active === link.href
+                      ? 'text-violet-400'
+                      : 'text-slate-300 hover:text-violet-400'
+                  )}
                 >
                   {link.label}
                 </a>

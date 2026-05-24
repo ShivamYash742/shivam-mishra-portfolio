@@ -69,36 +69,49 @@ export default function Skills() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {skills.map((category, idx) => (
-            <motion.div
+            <motion.article
               key={category.category}
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: idx * 0.08 }}
+              aria-labelledby={`skill-cat-${idx}`}
               className="group p-6 rounded-2xl bg-white/[0.03] border border-white/[0.08] hover:border-violet-500/30 hover:bg-white/[0.05] transition-all duration-300 hover:-translate-y-1"
             >
               <div
+                aria-hidden="true"
                 className="w-2 h-2 rounded-full mb-4"
                 style={{
                   backgroundColor: category.color,
                   boxShadow: `0 0 12px ${category.color}60`,
                 }}
               />
-              <h3 className="text-white font-semibold text-base mb-4">{category.category}</h3>
-              <div className="flex flex-wrap gap-2">
+              <h3
+                id={`skill-cat-${idx}`}
+                className="text-white font-semibold text-base mb-4"
+              >
+                {category.category}
+              </h3>
+              <ul className="flex flex-wrap gap-2 list-none p-0 m-0">
                 {category.items.map((skill) => {
                   const Icon = skillIconMap[skill];
                   return (
-                    <span
+                    <li
                       key={skill}
                       className="flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-lg bg-white/[0.05] text-slate-300 border border-white/[0.06] group-hover:border-white/[0.12] transition-colors duration-200"
                     >
-                      {Icon && <Icon size={11} style={{ color: category.color, flexShrink: 0 }} />}
+                      {Icon && (
+                        <Icon
+                          size={11}
+                          aria-hidden="true"
+                          style={{ color: category.color, flexShrink: 0 }}
+                        />
+                      )}
                       {skill}
-                    </span>
+                    </li>
                   );
                 })}
-              </div>
-            </motion.div>
+              </ul>
+            </motion.article>
           ))}
         </div>
       </div>

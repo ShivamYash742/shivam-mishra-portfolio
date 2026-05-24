@@ -53,18 +53,20 @@ export default function Projects() {
                       href={project.github}
                       target="_blank"
                       rel="noopener noreferrer"
+                      aria-label={`${project.name} on GitHub`}
                       className="text-slate-500 hover:text-violet-400 transition-colors"
                     >
-                      <Github size={18} />
+                      <Github size={18} aria-hidden="true" />
                     </a>
                     {project.live !== '#' && (
                       <a
                         href={project.live}
                         target="_blank"
                         rel="noopener noreferrer"
+                        aria-label={`${project.name} live demo`}
                         className="text-slate-500 hover:text-cyan-400 transition-colors"
                       >
-                        <ExternalLink size={18} />
+                        <ExternalLink size={18} aria-hidden="true" />
                       </a>
                     )}
                   </div>

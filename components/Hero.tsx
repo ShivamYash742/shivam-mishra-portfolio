@@ -9,7 +9,10 @@ import { profile } from '@/lib/data';
 const Hero3D = dynamic(() => import('./Hero3D'), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-full bg-gradient-to-br from-violet-900/10 to-cyan-900/10 animate-pulse" />
+    <div
+      aria-hidden="true"
+      className="absolute inset-0 w-full h-full bg-gradient-to-br from-violet-900/10 to-cyan-900/10 animate-pulse"
+    />
   ),
 });
 
