@@ -158,6 +158,13 @@ function InfoPanel({ centered = false }: { centered?: boolean }) {
         >
           Contact Me
         </a>
+        <a
+          href="/journey/ZS"
+          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-600/20 to-violet-600/20 border border-cyan-500/40 hover:border-cyan-400/60 hover:from-cyan-600/30 hover:to-violet-600/30 text-cyan-300 font-semibold rounded-xl transition-all duration-200 hover:-translate-y-0.5 backdrop-blur-sm"
+        >
+          <Sparkles size={15} />
+          My Journey
+        </a>
       </div>
       <div className={`flex items-center gap-5 ${btnRow}`}>
         {socials.map(({ icon: Icon, href, label }) => (
@@ -192,17 +199,17 @@ export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const { scrollY } = useScroll();
 
-  // Image slides quick. Info starts appearing immediately on scroll (scrollY > 0) and becomes fully visible by 150px scroll, holding visible until section scroll completes.
-  const unitX = useTransform(scrollY, [0, 150], ['0vw', '-22vw']);
-  const unitScale = useTransform(scrollY, [0, 150], [1.05, 0.92]);
+  // Smooth scroll-driven animation: spread over a longer range so motion feels silky, not jumpy.
+  const unitX = useTransform(scrollY, [0, 400], ['0vw', '-22vw'], { clamp: true });
+  const unitScale = useTransform(scrollY, [0, 400], [1.05, 0.92], { clamp: true });
 
-  const infoOpacity = useTransform(scrollY, [0, 150], [0, 1]);
-  const infoX = useTransform(scrollY, [0, 150], [40, 0]);
+  const infoOpacity = useTransform(scrollY, [80, 400], [0, 1], { clamp: true });
+  const infoX = useTransform(scrollY, [80, 400], [60, 0], { clamp: true });
 
-  const bubbleOpacity = useTransform(scrollY, [0, 50], [1, 0]);
-  const bubbleY = useTransform(scrollY, [0, 50], [0, -30]);
+  const bubbleOpacity = useTransform(scrollY, [0, 120], [1, 0], { clamp: true });
+  const bubbleY = useTransform(scrollY, [0, 120], [0, -30], { clamp: true });
 
-  const hintOpacity = useTransform(scrollY, [0, 30], [1, 0]);
+  const hintOpacity = useTransform(scrollY, [0, 80], [1, 0], { clamp: true });
 
   return (
     <>
@@ -234,11 +241,11 @@ export default function Hero() {
         </div>
       </section>
 
-      {/* Desktop: scrollytelling */}
+      {/* Desktop: scrollytelling — height increased so scroll range matches animation range */}
       <section
         ref={sectionRef}
         id="home"
-        className="hidden lg:block relative bg-[#0a0a0f] h-[200vh]"
+        className="hidden lg:block relative bg-[#0a0a0f] h-[260vh]"
       >
         <div className="sticky top-0 h-screen w-full overflow-hidden">
           {/* Ambient background glows (stationary) */}

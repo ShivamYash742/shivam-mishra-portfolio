@@ -17,7 +17,7 @@ html {
 body {
   background-color: #0a0a0f;
   color: #f8fafc;
-  font-family: var(--font-inter, Arial, sans-serif);
+  font-family: var(--font-sans, 'Plus Jakarta Sans', system-ui, sans-serif);
   overflow-x: hidden;
 }
 
@@ -41,4 +41,76 @@ body {
 ::selection {
   background: rgba(124, 58, 237, 0.25);
   color: #f8fafc;
+}
+
+/* ─── ZS Campus Beats Animations ─────────────────────────────────────────── */
+
+@keyframes blob {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(4%, 3%) scale(1.05);
+  }
+  66% {
+    transform: translate(-3%, 5%) scale(0.96);
+  }
+}
+
+@keyframes blob-delay {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(-5%, -3%) scale(1.04);
+  }
+  66% {
+    transform: translate(3%, -2%) scale(0.97);
+  }
+}
+
+@keyframes blob-slow {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(3%, -4%) scale(1.06);
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-33.333%);
+  }
+}
+
+.animate-blob {
+  animation: blob 18s ease-in-out infinite;
+}
+
+.animate-blob-delay {
+  animation: blob-delay 22s ease-in-out infinite 4s;
+}
+
+.animate-blob-slow {
+  animation: blob-slow 28s ease-in-out infinite 8s;
+}
+
+.animate-marquee {
+  animation: marquee 18s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-blob,
+  .animate-blob-delay,
+  .animate-blob-slow,
+  .animate-marquee {
+    animation: none;
+  }
 }
