@@ -43,74 +43,235 @@ body {
   color: #f8fafc;
 }
 
-/* ─── ZS Campus Beats Animations ─────────────────────────────────────────── */
+/* ─── ZS Campus Beats — Base Animations ──────────────────────────────────── */
 
 @keyframes blob {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  33% {
-    transform: translate(4%, 3%) scale(1.05);
-  }
-  66% {
-    transform: translate(-3%, 5%) scale(0.96);
-  }
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(4%, 3%) scale(1.05); }
+  66% { transform: translate(-3%, 5%) scale(0.96); }
 }
 
 @keyframes blob-delay {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  33% {
-    transform: translate(-5%, -3%) scale(1.04);
-  }
-  66% {
-    transform: translate(3%, -2%) scale(0.97);
-  }
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(-5%, -3%) scale(1.04); }
+  66% { transform: translate(3%, -2%) scale(0.97); }
 }
 
 @keyframes blob-slow {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(3%, -4%) scale(1.06);
-  }
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(3%, -4%) scale(1.06); }
 }
 
 @keyframes marquee {
-  0% {
-    transform: translateX(0%);
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-33.333%); }
+}
+
+.animate-blob { animation: blob 18s ease-in-out infinite; }
+.animate-blob-delay { animation: blob-delay 22s ease-in-out infinite 4s; }
+.animate-blob-slow { animation: blob-slow 28s ease-in-out infinite 8s; }
+.animate-marquee { animation: marquee 18s linear infinite; }
+
+/* ─── Premium Visual Effects ─────────────────────────────────────────────── */
+
+/* Shimmer sweep — golden shine that passes across text or cards */
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.animate-shimmer {
+  background-size: 200% auto;
+  animation: shimmer 3s linear infinite;
+}
+
+/* Rotating conic gradient border */
+@keyframes border-rotate {
+  0% { --border-angle: 0deg; }
+  100% { --border-angle: 360deg; }
+}
+
+@property --border-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.animate-border-rotate {
+  animation: border-rotate 4s linear infinite;
+  background: conic-gradient(
+    from var(--border-angle),
+    transparent 40%,
+    rgba(139, 92, 246, 0.6) 50%,
+    transparent 60%
+  );
+}
+
+.animate-border-rotate-gold {
+  animation: border-rotate 4s linear infinite;
+  background: conic-gradient(
+    from var(--border-angle),
+    transparent 30%,
+    rgba(251, 191, 36, 0.7) 45%,
+    rgba(245, 158, 11, 0.5) 55%,
+    transparent 70%
+  );
+}
+
+/* Glow pulse — breathing neon underglow */
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+/* Slow spin for decorative elements */
+@keyframes spin-slow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.animate-spin-slow { animation: spin-slow 20s linear infinite; }
+.animate-spin-slower { animation: spin-slow 35s linear infinite; }
+.animate-spin-reverse { animation: spin-slow 25s linear infinite reverse; }
+
+/* Scanline — horizontal line sweeping downward (danger/glitch) */
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+.animate-scanline {
+  animation: scanline 4s linear infinite;
+}
+
+/* Float up — particles/elements drifting upward */
+@keyframes float-up {
+  0% { transform: translateY(0) scale(1); opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { transform: translateY(-120px) scale(0.5); opacity: 0; }
+}
+
+.animate-float-up {
+  animation: float-up 4s ease-out infinite;
+}
+
+/* Glitch flicker effect */
+@keyframes glitch {
+  0%, 100% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+}
+
+@keyframes glitch-skew {
+  0%, 100% { transform: skew(0deg); }
+  20% { transform: skew(-1deg); }
+  40% { transform: skew(0.5deg); }
+  60% { transform: skew(-0.3deg); }
+  80% { transform: skew(0.8deg); }
+}
+
+/* Radar sweep — rotating gradient cone */
+@keyframes radar-sweep {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.animate-radar {
+  animation: radar-sweep 6s linear infinite;
+}
+
+/* Text glow breathing */
+@keyframes text-glow {
+  0%, 100% { text-shadow: 0 0 20px rgba(251, 191, 36, 0.3), 0 0 40px rgba(251, 191, 36, 0.1); }
+  50% { text-shadow: 0 0 40px rgba(251, 191, 36, 0.6), 0 0 80px rgba(251, 191, 36, 0.3), 0 0 120px rgba(251, 191, 36, 0.1); }
+}
+
+.animate-text-glow {
+  animation: text-glow 3s ease-in-out infinite;
+}
+
+/* Aurora — slowly morphing gradient mesh */
+@keyframes aurora {
+  0%, 100% {
+    background-position: 0% 50%;
+    background-size: 200% 200%;
   }
-  100% {
-    transform: translateX(-33.333%);
+  25% {
+    background-position: 50% 0%;
+    background-size: 250% 250%;
+  }
+  50% {
+    background-position: 100% 50%;
+    background-size: 200% 200%;
+  }
+  75% {
+    background-position: 50% 100%;
+    background-size: 250% 250%;
   }
 }
 
-.animate-blob {
-  animation: blob 18s ease-in-out infinite;
+.animate-aurora {
+  animation: aurora 15s ease-in-out infinite;
 }
 
-.animate-blob-delay {
-  animation: blob-delay 22s ease-in-out infinite 4s;
+/* Stamp — bounce-in seal effect */
+@keyframes stamp {
+  0% { transform: scale(4) rotate(-30deg); opacity: 0; }
+  50% { transform: scale(0.9) rotate(2deg); opacity: 1; }
+  70% { transform: scale(1.05) rotate(-1deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }
 
-.animate-blob-slow {
-  animation: blob-slow 28s ease-in-out infinite 8s;
+.animate-stamp {
+  animation: stamp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.animate-marquee {
-  animation: marquee 18s linear infinite;
+/* Typewriter cursor blink */
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.animate-cursor-blink {
+  animation: cursor-blink 0.8s step-end infinite;
+}
+
+/* Diagonal hazard stripes */
+.hazard-stripes {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 6px,
+    rgba(239, 68, 68, 0.06) 6px,
+    rgba(239, 68, 68, 0.06) 12px
+  );
 }
 
 @media (prefers-reduced-motion: reduce) {
   .animate-blob,
   .animate-blob-delay,
   .animate-blob-slow,
-  .animate-marquee {
+  .animate-marquee,
+  .animate-shimmer,
+  .animate-border-rotate,
+  .animate-border-rotate-gold,
+  .animate-glow-pulse,
+  .animate-spin-slow,
+  .animate-spin-slower,
+  .animate-spin-reverse,
+  .animate-scanline,
+  .animate-float-up,
+  .animate-radar,
+  .animate-text-glow,
+  .animate-aurora,
+  .animate-stamp,
+  .animate-cursor-blink {
     animation: none;
   }
 }

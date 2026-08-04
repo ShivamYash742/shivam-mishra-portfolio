@@ -31,7 +31,7 @@ export default function Offer() {
       ).matches;
       if (prefersReduced) return;
 
-      const duration = 3000;
+      const duration = 4000;
       const animationEnd = Date.now() + duration;
 
       const frame = () => {
@@ -39,20 +39,20 @@ export default function Offer() {
         if (timeLeft <= 0) return;
 
         confetti({
-          particleCount: 3,
+          particleCount: 4,
           angle: 60,
-          spread: 55,
+          spread: 60,
           origin: { x: 0, y: 0.65 },
           colors: ["#f59e0b", "#fbbf24", "#fde68a", "#ffffff"],
-          scalar: 0.9,
+          scalar: 1,
         });
         confetti({
-          particleCount: 3,
+          particleCount: 4,
           angle: 120,
-          spread: 55,
+          spread: 60,
           origin: { x: 1, y: 0.65 },
           colors: ["#f59e0b", "#fbbf24", "#fde68a", "#ffffff"],
-          scalar: 0.9,
+          scalar: 1,
         });
 
         requestAnimationFrame(frame);
@@ -73,29 +73,16 @@ export default function Offer() {
     >
       <AnimatedBackground variant="offer" />
 
-      {/* Radial gold background */}
-      <motion.div
-        className="absolute inset-0 pointer-events-none"
-        initial={{ opacity: 0 }}
-        animate={isInView ? { opacity: 1 } : {}}
-        transition={{ duration: 2 }}
-        style={{
-          background:
-            "radial-gradient(ellipse 80% 60% at 50% 50%, rgba(251,191,36,0.07) 0%, transparent 70%)",
-        }}
-      />
-
-      {/* Slow golden vignette */}
-      <motion.div
-        className="absolute inset-0 pointer-events-none"
-        initial={{ opacity: 0 }}
-        animate={isInView ? { opacity: 0.6 } : {}}
-        transition={{ duration: 3, delay: 1 }}
-        style={{
-          background:
-            "radial-gradient(ellipse 100% 80% at 50% 50%, rgba(245,158,11,0.05) 0%, transparent 60%)",
-        }}
-      />
+      {/* Golden aurora effect */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
+        <div
+          className="w-full h-full animate-aurora"
+          style={{
+            backgroundImage: "radial-gradient(circle at 50% 50%, rgba(251,191,36,0.3) 0%, rgba(245,158,11,0.1) 40%, transparent 60%), radial-gradient(circle at 80% 20%, rgba(217,119,6,0.3) 0%, transparent 50%), radial-gradient(circle at 20% 80%, rgba(253,230,138,0.2) 0%, transparent 50%)",
+            filter: "blur(40px)",
+          }}
+        />
+      </div>
 
       <div className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto">
         {/* Star icon */}
@@ -112,7 +99,7 @@ export default function Offer() {
                 ? {
                     boxShadow: [
                       "0 0 20px rgba(251,191,36,0.2)",
-                      "0 0 60px rgba(251,191,36,0.5)",
+                      "0 0 60px rgba(251,191,36,0.6)",
                       "0 0 20px rgba(251,191,36,0.2)",
                     ],
                   }
@@ -120,15 +107,17 @@ export default function Offer() {
             }
             transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
           />
-          <div className="w-20 h-20 rounded-full border border-amber-400/50 bg-gradient-to-b from-amber-400/25 to-amber-600/10 flex items-center justify-center">
-            <Star size={36} className="text-amber-300 fill-amber-300" />
+          <div className="w-20 h-20 rounded-full border-2 border-amber-400/50 bg-gradient-to-b from-amber-400/25 to-amber-600/10 flex items-center justify-center shadow-[0_0_30px_rgba(251,191,36,0.3)] relative overflow-hidden">
+             {/* Golden shimmer passing over star */}
+             <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent,rgba(255,255,255,0.4),transparent)] animate-shimmer pointer-events-none" />
+             <Star size={36} className="text-amber-300 fill-amber-300 relative z-10" />
           </div>
         </motion.div>
 
-        {/* "MISSION COMPLETE" letter reveal — words stay intact, never break */}
+        {/* "MISSION COMPLETE" letter reveal */}
         <div className="mb-8">
           <h2
-            className="text-[clamp(2.2rem,8vw,6rem)] font-black tracking-[-0.02em] leading-none flex flex-wrap justify-center gap-x-[0.3em] gap-y-2"
+            className="text-[clamp(2.2rem,8vw,6rem)] font-black tracking-[-0.02em] leading-none flex flex-wrap justify-center gap-x-[0.3em] gap-y-2 animate-text-glow relative"
             aria-label="Mission Complete"
           >
             {missionWords.map((word, wi) => {
@@ -147,7 +136,7 @@ export default function Offer() {
                         delay: 0.4 + (wordStartIndex + ci) * 0.04,
                         ease: [0.16, 1, 0.3, 1],
                       }}
-                      className="inline-block"
+                      className="inline-block relative"
                       style={{
                         background:
                           "linear-gradient(180deg, #fde68a 0%, #f59e0b 40%, #d97706 100%)",
@@ -162,25 +151,33 @@ export default function Offer() {
                 </span>
               );
             })}
+            
+            {/* Shimmer sweep over the text */}
+            <motion.div
+               className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent)] animate-shimmer pointer-events-none"
+               style={{ WebkitBackgroundClip: "text" }}
+               initial={{ opacity: 0 }}
+               animate={isInView ? { opacity: 1 } : {}}
+               transition={{ delay: 1 }}
+            />
           </h2>
         </div>
 
-        {/* PPO badge */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={isInView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ delay: 1.2, duration: 0.5 }}
-          className="mb-12"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-amber-400/30 bg-amber-400/5">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-            <span className="text-sm font-medium text-amber-300/80 tracking-widest uppercase">
-              Pre-Placement Offer · FTE
-            </span>
-          </div>
-        </motion.div>
+        {/* PPO badge - Stamp animation */}
+        <div className="mb-12 h-10 flex items-center justify-center">
+          {isInView && (
+            <div className="animate-stamp">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-amber-400/50 bg-amber-400/10 shadow-[0_0_20px_rgba(251,191,36,0.3)]">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                <span className="text-sm font-bold text-amber-300 tracking-widest uppercase">
+                  Pre-Placement Offer · FTE
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
 
-        {/* Offer details grid */}
+        {/* Offer details grid with rotating golden borders */}
         <motion.div
           className="grid sm:grid-cols-2 gap-4 w-full max-w-2xl mb-12"
           initial={{ opacity: 0, y: 20 }}
@@ -190,28 +187,47 @@ export default function Offer() {
           {offerDetails.map((detail, i) => (
             <motion.div
               key={detail.label}
-              className="group relative rounded-2xl border border-amber-400/20 bg-amber-400/[0.03] backdrop-blur-sm p-5 text-left hover:border-amber-400/40 transition-all duration-300"
+              className="group relative"
               initial={{ opacity: 0, y: 15 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 1.5 + i * 0.1 }}
-              whileHover={{ scale: 1.02 }}
+              whileHover={{ scale: 1.02, y: -4 }}
             >
-              <div className="flex items-center gap-2 text-amber-400/60 mb-2">
-                {detail.icon}
-                <span className="text-[10px] uppercase tracking-widest font-medium">
-                  {detail.label}
-                </span>
-              </div>
+              {/* Rotating golden border */}
+              <div className="absolute -inset-[1px] rounded-2xl animate-border-rotate-gold opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              
+              {/* Neon underglow */}
               <div
-                className={`font-bold text-white/90 ${
-                  detail.label === "Package"
-                    ? "text-2xl text-amber-300"
-                    : detail.label === "Role"
-                    ? "text-sm leading-snug"
-                    : "text-lg"
-                }`}
-              >
-                {detail.value}
+                className="absolute -inset-3 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl pointer-events-none bg-amber-400/20"
+              />
+
+              <div className="relative rounded-2xl border border-amber-400/20 bg-amber-400/[0.03] backdrop-blur-sm p-5 text-left transition-all duration-300 group-hover:border-transparent h-full">
+                
+                {/* Glow overlay */}
+                <div
+                  className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                  style={{
+                    background: "radial-gradient(ellipse at 50% 0%, rgba(251,191,36,0.1), transparent 60%)",
+                  }}
+                />
+
+                <div className="flex items-center gap-2 text-amber-400/60 mb-2 relative z-10">
+                  {detail.icon}
+                  <span className="text-[10px] uppercase tracking-widest font-medium">
+                    {detail.label}
+                  </span>
+                </div>
+                <div
+                  className={`font-bold text-white/90 relative z-10 ${
+                    detail.label === "Package"
+                      ? "text-2xl text-amber-300 drop-shadow-[0_0_10px_rgba(251,191,36,0.5)]"
+                      : detail.label === "Role"
+                      ? "text-sm leading-snug"
+                      : "text-lg"
+                  }`}
+                >
+                  {detail.value}
+                </div>
               </div>
             </motion.div>
           ))}

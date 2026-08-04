@@ -39,6 +39,15 @@ const iconColors = [
   "text-amber-300",
 ];
 
+const glowColors = [
+  "rgba(139,92,246,0.4)",
+  "rgba(59,130,246,0.4)",
+  "rgba(251,191,36,0.4)",
+  "rgba(16,185,129,0.4)",
+  "rgba(99,102,241,0.4)",
+  "rgba(251,191,36,0.6)",
+];
+
 export default function Journey() {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
@@ -71,7 +80,7 @@ export default function Journey() {
         </p>
       </motion.div>
 
-      {/* Journey stages — horizontal on desktop, vertical on mobile */}
+      {/* Journey stages */}
       <div className="max-w-6xl mx-auto">
         {/* Desktop: horizontal flow */}
         <div className="hidden lg:flex items-center justify-between gap-0">
@@ -81,26 +90,51 @@ export default function Journey() {
                 className="flex flex-col items-center gap-3 cursor-default group"
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: i * 0.1 }}
-                whileHover={{ y: -4 }}
+                transition={{ duration: 0.6, delay: i * 0.12 }}
+                whileHover={{ y: -6 }}
+                style={{ perspective: "800px" }}
               >
-                <div
-                  className={`relative w-16 h-16 rounded-2xl border bg-gradient-to-b ${stageColors[i]} flex items-center justify-center transition-all duration-300 group-hover:scale-110`}
+                {/* Icon container with spinning ring on hover + 3D tilt */}
+                <motion.div
+                  className="relative"
+                  whileHover={{ rotateY: 12, rotateX: -8 }}
+                  transition={{ type: "spring", stiffness: 200, damping: 15 }}
                 >
-                  <span className={iconColors[i]}>
-                    {iconMap[stage.icon]}
-                  </span>
-                  {i === journeyStages.length - 1 && (
-                    <motion.div
-                      className="absolute inset-0 rounded-2xl"
-                      style={{
-                        boxShadow: "0 0 20px rgba(251,191,36,0.3)",
-                      }}
-                      animate={{ opacity: [0.5, 1, 0.5] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    />
-                  )}
-                </div>
+                  {/* Spinning ring on hover */}
+                  <div
+                    className="absolute -inset-2 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-spin-slow"
+                    style={{
+                      background: `conic-gradient(from 0deg, transparent 60%, ${glowColors[i]} 80%, transparent 100%)`,
+                      borderRadius: "16px",
+                    }}
+                  />
+                  
+                  {/* Glow behind icon on hover */}
+                  <div
+                    className="absolute -inset-3 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-lg pointer-events-none"
+                    style={{ background: glowColors[i] }}
+                  />
+
+                  <div
+                    className={`relative w-16 h-16 rounded-2xl border bg-gradient-to-b ${stageColors[i]} flex items-center justify-center transition-all duration-300 group-hover:scale-110`}
+                  >
+                    <span className={iconColors[i]}>
+                      {iconMap[stage.icon]}
+                    </span>
+                    {/* Last stage golden glow */}
+                    {i === journeyStages.length - 1 && (
+                      <motion.div
+                        className="absolute inset-0 rounded-2xl"
+                        style={{
+                          boxShadow: "0 0 25px rgba(251,191,36,0.4)",
+                        }}
+                        animate={{ opacity: [0.4, 1, 0.4] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                      />
+                    )}
+                  </div>
+                </motion.div>
+
                 <span className="text-xs font-medium text-white/50 text-center max-w-[80px] group-hover:text-white/80 transition-colors duration-200">
                   {stage.label}
                 </span>
@@ -109,23 +143,43 @@ export default function Journey() {
                 </span>
               </motion.div>
 
-              {/* Connector */}
+              {/* Glowing animated connector */}
               {i < journeyStages.length - 1 && (
                 <motion.div
                   className="relative flex-1 mx-2 h-px"
                   initial={{ scaleX: 0 }}
                   animate={isInView ? { scaleX: 1 } : {}}
-                  transition={{ duration: 0.5, delay: i * 0.1 + 0.3 }}
+                  transition={{ duration: 0.5, delay: i * 0.12 + 0.3 }}
                   style={{ transformOrigin: "left" }}
                 >
-                  <div className="w-full h-px bg-gradient-to-r from-white/20 to-white/5" />
+                  {/* Base line with gradient */}
+                  <div
+                    className="w-full h-[2px] rounded-full"
+                    style={{
+                      background: `linear-gradient(90deg, ${glowColors[i]}, ${glowColors[i + 1]})`,
+                      opacity: 0.4,
+                    }}
+                  />
+                  {/* Glow behind the line */}
+                  <div
+                    className="absolute inset-0 blur-sm"
+                    style={{
+                      background: `linear-gradient(90deg, ${glowColors[i]}, ${glowColors[i + 1]})`,
+                      opacity: 0.3,
+                    }}
+                  />
+                  {/* Traveling particle */}
                   <motion.div
-                    className="absolute top-0 left-0 w-2 h-2 -translate-y-1/2 rounded-full bg-white/30"
-                    animate={{ x: ["0%", "100%"] }}
+                    className="absolute top-0 left-0 w-3 h-3 -translate-y-1/2 rounded-full"
+                    style={{
+                      background: glowColors[i],
+                      boxShadow: `0 0 8px ${glowColors[i]}`,
+                    }}
+                    animate={{ x: ["0%", "calc(100% - 12px)"] }}
                     transition={{
-                      duration: 3,
+                      duration: 2.5,
                       repeat: Infinity,
-                      delay: i * 0.5,
+                      delay: i * 0.4,
                       ease: "linear",
                     }}
                   />
@@ -160,7 +214,12 @@ export default function Journey() {
                 </div>
               </motion.div>
               {i < journeyStages.length - 1 && (
-                <div className="w-px h-8 bg-gradient-to-b from-white/20 to-transparent my-2 ml-6 self-start" />
+                <div
+                  className="w-[2px] h-8 my-2 ml-6 self-start rounded-full"
+                  style={{
+                    background: `linear-gradient(to bottom, ${glowColors[i]}, transparent)`,
+                  }}
+                />
               )}
             </div>
           ))}

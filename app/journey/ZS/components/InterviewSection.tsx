@@ -14,6 +14,7 @@ interface InterviewRound {
   status: "completed" | "waiting" | "scheduled";
   color: string;
   borderColor: string;
+  glow: string;
 }
 
 const interviewRounds: InterviewRound[] = [
@@ -28,6 +29,7 @@ const interviewRounds: InterviewRound[] = [
     status: "completed",
     color: "from-violet-500/15 to-violet-500/5",
     borderColor: "border-violet-500/25",
+    glow: "rgba(139,92,246,0.2)",
   },
   {
     id: "round-1",
@@ -40,6 +42,7 @@ const interviewRounds: InterviewRound[] = [
     status: "completed",
     color: "from-blue-500/15 to-blue-500/5",
     borderColor: "border-blue-500/25",
+    glow: "rgba(59,130,246,0.2)",
   },
   {
     id: "r2-scheduled",
@@ -52,6 +55,7 @@ const interviewRounds: InterviewRound[] = [
     status: "scheduled",
     color: "from-emerald-500/15 to-emerald-500/5",
     borderColor: "border-emerald-500/25",
+    glow: "rgba(16,185,129,0.2)",
   },
   {
     id: "round-2",
@@ -64,6 +68,7 @@ const interviewRounds: InterviewRound[] = [
     status: "completed",
     color: "from-amber-500/15 to-amber-500/5",
     borderColor: "border-amber-500/25",
+    glow: "rgba(251,191,36,0.2)",
   },
   {
     id: "follow-up",
@@ -76,6 +81,7 @@ const interviewRounds: InterviewRound[] = [
     status: "completed",
     color: "from-indigo-500/15 to-indigo-500/5",
     borderColor: "border-indigo-500/25",
+    glow: "rgba(99,102,241,0.2)",
   },
   {
     id: "waiting",
@@ -88,6 +94,7 @@ const interviewRounds: InterviewRound[] = [
     status: "waiting",
     color: "from-red-500/10 to-red-500/5",
     borderColor: "border-red-500/20",
+    glow: "rgba(239,68,68,0.2)",
   },
 ];
 
@@ -98,10 +105,28 @@ export default function InterviewSection() {
   return (
     <section
       ref={ref}
-      className="relative py-32 px-6 bg-[#050508]"
+      className="relative py-32 px-6 bg-[#050508] overflow-hidden"
       aria-label="Interview Rounds"
     >
-      <div className="max-w-5xl mx-auto">
+      {/* Radar sweep background */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.04]">
+        <div
+          className="w-[800px] h-[800px] rounded-full animate-radar"
+          style={{
+            background:
+              "conic-gradient(from 0deg, transparent 0%, rgba(99,102,241,0.4) 10%, transparent 20%)",
+          }}
+        />
+      </div>
+
+      {/* Concentric circle decorations */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="w-[600px] h-[600px] rounded-full border border-white/[0.02]" />
+        <div className="absolute w-[400px] h-[400px] rounded-full border border-white/[0.03]" />
+        <div className="absolute w-[200px] h-[200px] rounded-full border border-white/[0.04]" />
+      </div>
+
+      <div className="max-w-5xl mx-auto relative z-10">
         {/* Header */}
         <motion.div
           className="text-center mb-16"
@@ -137,15 +162,27 @@ export default function InterviewSection() {
                 delay: i * 0.1,
                 ease: [0.16, 1, 0.3, 1],
               }}
-              whileHover={{ y: -4 }}
+              whileHover={{ y: -6, scale: 1.02 }}
             >
+              {/* Rotating border on hover */}
+              <div className="absolute -inset-[1px] rounded-2xl animate-border-rotate opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+              {/* Neon underglow */}
               <div
-                className={`relative h-full rounded-2xl border bg-gradient-to-b ${round.color} ${round.borderColor} backdrop-blur-sm p-5 overflow-hidden group-hover:border-opacity-50 transition-all duration-300`}
+                className="absolute -inset-3 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl pointer-events-none"
+                style={{ background: round.glow }}
+              />
+
+              <div
+                className={`relative h-full rounded-2xl border bg-gradient-to-b ${round.color} ${round.borderColor} backdrop-blur-sm p-5 overflow-hidden group-hover:border-opacity-60 transition-all duration-300`}
               >
                 {/* Status indicator */}
                 <div className="flex items-center justify-between mb-4">
                   <div
-                    className={`w-10 h-10 rounded-xl border ${round.borderColor} bg-white/[0.04] flex items-center justify-center text-white/60`}
+                    className={`w-10 h-10 rounded-xl border ${round.borderColor} bg-white/[0.04] flex items-center justify-center text-white/60 group-hover:shadow-lg transition-shadow duration-300`}
+                    style={{
+                      boxShadow: "none",
+                    }}
                   >
                     {round.icon}
                   </div>
@@ -166,6 +203,20 @@ export default function InterviewSection() {
                   </div>
                 </div>
 
+                {/* Pulsing live dot for waiting card */}
+                {round.status === "waiting" && (
+                  <motion.div
+                    className="absolute top-3 right-3 flex items-center gap-1.5"
+                    animate={{ opacity: [1, 0.4, 1] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_6px_rgba(239,68,68,0.8)]" />
+                    <span className="text-[9px] font-bold text-red-400/80 tracking-widest uppercase">
+                      LIVE
+                    </span>
+                  </motion.div>
+                )}
+
                 {/* Date */}
                 <div className="text-[10px] font-mono text-white/25 tracking-widest uppercase mb-1">
                   {round.date}
@@ -185,6 +236,14 @@ export default function InterviewSection() {
                 <p className="text-sm text-white/40 leading-relaxed">
                   {round.description}
                 </p>
+
+                {/* Hover top glow */}
+                <div
+                  className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                  style={{
+                    background: `radial-gradient(ellipse at 50% 0%, ${round.glow}, transparent 60%)`,
+                  }}
+                />
               </div>
             </motion.div>
           ))}
