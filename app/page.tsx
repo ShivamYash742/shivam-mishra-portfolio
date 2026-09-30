@@ -1,4 +1,5 @@
 import dynamic from "next/dynamic";
+import MotionProvider from "@/components/MotionProvider";
 import Navigation from "@/components/Navigation";
 import Hero from "@/components/Hero";
 import Skills from "@/components/Skills";
@@ -13,15 +14,17 @@ const Footer = dynamic(() => import("@/components/Footer"));
 export default function Home() {
   return (
     <main className="bg-[#0a0a0f] min-h-screen">
-      <Navigation />
-      <Hero />
-      <Skills />
-      <Projects />
-      <Experience />
-      <Education />
-      <Achievements />
-      <Contact />
-      <Footer />
+      <MotionProvider>
+        <Navigation />
+        <Hero />
+        <Skills />
+        <Projects />
+        <Experience />
+        <Education />
+        <Achievements />
+        <Contact />
+        <Footer />
+      </MotionProvider>
     </main>
   );
 }

@@ -1,10 +1,20 @@
 'use client';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import { motion, useScroll, useTransform, type MotionValue } from 'framer-motion';
-import { useRef } from 'react';
+import {
+  motion,
+  useMotionTemplate,
+  useMotionValueEvent,
+  useScroll,
+  useSpring,
+  useTransform,
+  type MotionValue,
+  type Variants,
+} from 'framer-motion';
+import { useRef, useState } from 'react';
 import { Github, Linkedin, Mail, Phone, ArrowRight, ChevronDown, Sparkles } from 'lucide-react';
 import { profile } from '@/lib/data';
+import { easeOutExpo } from '@/lib/motion';
 
 const Hero3D = dynamic(() => import('./Hero3D'), {
   ssr: false,
@@ -25,31 +35,15 @@ const socials = [
 
 function ImageAvatar() {
   return (
-    <div className="relative">
-      <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
-        className="absolute inset-[-18px] rounded-full border-2 border-dashed border-violet-500/25"
-      />
-      <motion.div
-        animate={{ rotate: -360 }}
-        transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
-        className="absolute inset-[-9px] rounded-full border border-cyan-400/20"
-      />
-      <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
-        className="absolute inset-[-20px] rounded-full"
-      >
+    <div className="relative animate-float-y">
+      <div className="absolute inset-[-18px] rounded-full border-2 border-dashed border-violet-500/25 animate-orbit [--orbit-duration:25s]" />
+      <div className="absolute inset-[-9px] rounded-full border border-cyan-400/20 animate-orbit animate-orbit-reverse [--orbit-duration:18s]" />
+      <div className="absolute inset-[-20px] rounded-full animate-orbit [--orbit-duration:6s]">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-violet-400 shadow-[0_0_8px_3px_rgba(167,139,250,0.7)]" />
-      </motion.div>
-      <motion.div
-        animate={{ rotate: -360 }}
-        transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-        className="absolute inset-[-20px] rounded-full"
-      >
+      </div>
+      <div className="absolute inset-[-20px] rounded-full animate-orbit animate-orbit-reverse [--orbit-duration:8s]">
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_3px_rgba(34,211,238,0.7)]" />
-      </motion.div>
+      </div>
 
       <div className="w-44 h-44 sm:w-52 sm:h-52 lg:w-64 lg:h-64 rounded-full p-[3px] bg-gradient-to-br from-violet-500 via-purple-400 to-cyan-400 shadow-[0_0_70px_rgba(124,58,237,0.55),0_0_120px_rgba(124,58,237,0.2)]">
         <div className="w-full h-full rounded-full overflow-hidden bg-[#0a0a0f] ring-2 ring-black/40">
@@ -64,16 +58,9 @@ function ImageAvatar() {
         </div>
       </div>
 
-      <motion.div
-        animate={{ scale: [1, 1.18, 1], opacity: [0.35, 0, 0.35] }}
-        transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute inset-0 rounded-full bg-violet-500/25 blur-sm pointer-events-none"
-      />
-      <motion.div
-        animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0, 0.2] }}
-        transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
-        className="absolute inset-0 rounded-full bg-cyan-500/15 blur-md pointer-events-none"
-      />
+      {/* Two sonar pings, offset so one is always expanding */}
+      <div className="absolute inset-0 rounded-full border border-violet-400/50 pointer-events-none animate-ring-ping" />
+      <div className="absolute inset-0 rounded-full border border-cyan-400/40 pointer-events-none animate-ring-ping [animation-delay:1.8s]" />
     </div>
   );
 }
@@ -125,48 +112,82 @@ function ThoughtBubble({
   );
 }
 
-function InfoPanel({ centered = false }: { centered?: boolean }) {
+const infoItem: Variants = {
+  hidden: { opacity: 0, y: 26 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.75, ease: easeOutExpo } },
+};
+
+function InfoPanel({
+  centered = false,
+  show = true,
+  delay = 0,
+}: {
+  centered?: boolean;
+  /** Plays the entrance when true, and reverses it when false. */
+  show?: boolean;
+  delay?: number;
+}) {
   const alignment = centered ? 'items-center text-center' : 'items-start text-left';
   const btnRow = centered ? 'justify-center' : '';
   return (
-    <div className={`flex flex-col ${alignment}`}>
-      <span className="inline-block font-mono text-violet-400 text-sm tracking-[0.2em] uppercase mb-4">
+    <motion.div
+      initial="hidden"
+      animate={show ? 'show' : 'hidden'}
+      variants={{
+        hidden: {},
+        show: { transition: { staggerChildren: 0.09, delayChildren: delay } },
+      }}
+      className={`flex flex-col ${alignment}`}
+    >
+      <motion.span
+        variants={infoItem}
+        className="inline-block font-mono text-violet-400 text-sm tracking-[0.2em] uppercase mb-4"
+      >
         Hi, I&apos;m
-      </span>
-      <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 leading-tight">
+      </motion.span>
+      <motion.h1
+        variants={infoItem}
+        className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 leading-tight"
+      >
         <span className="bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">
           {profile.name}
         </span>
-      </h1>
-      <h2 className="text-xl sm:text-2xl font-semibold mb-6 bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
+      </motion.h1>
+      <motion.h2
+        variants={infoItem}
+        className="text-xl sm:text-2xl font-semibold mb-6 bg-gradient-to-r from-violet-400 via-cyan-300 to-violet-400 bg-clip-text text-transparent animate-gradient-drift"
+      >
         {profile.title}
-      </h2>
-      <p className="text-slate-400 text-base sm:text-lg leading-relaxed mb-10 max-w-lg">
+      </motion.h2>
+      <motion.p
+        variants={infoItem}
+        className="text-slate-400 text-base sm:text-lg leading-relaxed mb-10 max-w-lg"
+      >
         {profile.tagline}
-      </p>
-      <div className={`flex flex-wrap gap-3 mb-10 ${btnRow}`}>
+      </motion.p>
+      <motion.div variants={infoItem} className={`flex flex-wrap gap-3 mb-10 ${btnRow}`}>
         <a
           href="#projects"
-          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-500 hover:to-violet-600 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:-translate-y-0.5"
+          className="btn-shine group flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-500 hover:to-violet-600 text-white font-semibold rounded-xl transition-[translate,scale,box-shadow] duration-200 shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:-translate-y-0.5 active:scale-[0.97]"
         >
           View Projects
-          <ArrowRight size={16} />
+          <ArrowRight size={16} className="transition-transform duration-200 group-hover:translate-x-1" />
         </a>
         <a
           href="#contact"
-          className="flex items-center gap-2 px-6 py-3 border border-violet-500/40 text-violet-300 hover:bg-violet-500/10 hover:border-violet-400/60 font-semibold rounded-xl transition-all duration-200 hover:-translate-y-0.5"
+          className="flex items-center gap-2 px-6 py-3 border border-violet-500/40 text-violet-300 hover:bg-violet-500/10 hover:border-violet-400/60 font-semibold rounded-xl transition-[translate,scale,background-color,border-color] duration-200 hover:-translate-y-0.5 active:scale-[0.97]"
         >
           Contact Me
         </a>
         <a
           href="/journey/ZS"
-          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-600/20 to-violet-600/20 border border-cyan-500/40 hover:border-cyan-400/60 hover:from-cyan-600/30 hover:to-violet-600/30 text-cyan-300 font-semibold rounded-xl transition-all duration-200 hover:-translate-y-0.5 backdrop-blur-sm"
+          className="group flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-600/20 to-violet-600/20 border border-cyan-500/40 hover:border-cyan-400/60 hover:from-cyan-600/30 hover:to-violet-600/30 text-cyan-300 font-semibold rounded-xl transition-[translate,scale,border-color] duration-200 hover:-translate-y-0.5 active:scale-[0.97] backdrop-blur-sm"
         >
-          <Sparkles size={15} />
+          <Sparkles size={15} className="transition-transform duration-300 group-hover:rotate-180 group-hover:scale-110" />
           My Journey
         </a>
-      </div>
-      <div className={`flex items-center gap-5 ${btnRow}`}>
+      </motion.div>
+      <motion.div variants={infoItem} className={`flex items-center gap-5 ${btnRow}`}>
         {socials.map(({ icon: Icon, href, label }) => (
           <a
             key={label}
@@ -174,13 +195,13 @@ function InfoPanel({ centered = false }: { centered?: boolean }) {
             target={href.startsWith('http') ? '_blank' : undefined}
             rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
             aria-label={label}
-            className="text-slate-400 hover:text-violet-400 hover:-translate-y-0.5 transition-all duration-200"
+            className="text-slate-400 hover:text-violet-400 hover:-translate-y-1 hover:scale-110 transition-[translate,scale,color] duration-200"
           >
             <Icon size={20} />
           </a>
         ))}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -199,12 +220,19 @@ export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const { scrollY } = useScroll();
 
-  // Smooth scroll-driven animation: spread over a longer range so motion feels silky, not jumpy.
-  const unitX = useTransform(scrollY, [0, 400], ['0vw', '-22vw'], { clamp: true });
-  const unitScale = useTransform(scrollY, [0, 400], [1.05, 0.92], { clamp: true });
+  // Scroll-driven values run through a spring so the avatar glides and settles
+  // instead of tracking the scrollbar 1:1.
+  const glide = { stiffness: 120, damping: 28, mass: 0.4 };
+  const unitXvw = useSpring(useTransform(scrollY, [0, 400], [0, -22], { clamp: true }), glide);
+  const unitX = useMotionTemplate`${unitXvw}vw`;
+  const unitScale = useSpring(useTransform(scrollY, [0, 400], [1.05, 0.92], { clamp: true }), glide);
 
-  const infoOpacity = useTransform(scrollY, [80, 400], [0, 1], { clamp: true });
-  const infoX = useTransform(scrollY, [80, 400], [60, 0], { clamp: true });
+  const infoOpacity = useTransform(scrollY, [60, 300], [0, 1], { clamp: true });
+  const infoX = useTransform(scrollY, [60, 400], [60, 0], { clamp: true });
+
+  // The info panel's contents cascade in (and back out) once scrolling starts.
+  const [infoShown, setInfoShown] = useState(() => scrollY.get() > 140);
+  useMotionValueEvent(scrollY, 'change', (v) => setInfoShown(v > 140));
 
   const bubbleOpacity = useTransform(scrollY, [0, 120], [1, 0], { clamp: true });
   const bubbleY = useTransform(scrollY, [0, 120], [0, -30], { clamp: true });
@@ -226,18 +254,18 @@ export default function Hero() {
         <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-cyan-500/6 rounded-full blur-[100px] pointer-events-none" />
 
         <div className="relative z-20 flex flex-col items-center gap-16 w-full">
-          <div className="relative pt-24">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.9, type: 'spring', stiffness: 80 }}
+            className="relative pt-24"
+          >
             <ThoughtBubble />
             <ImageAvatar />
-          </div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-            className="w-full"
-          >
-            <InfoPanel centered />
           </motion.div>
+          <div className="w-full">
+            <InfoPanel centered delay={0.4} />
+          </div>
         </div>
       </section>
 
@@ -285,7 +313,7 @@ export default function Hero() {
             style={{ opacity: infoOpacity, x: infoX }}
             className="absolute right-0 top-0 h-full w-1/2 flex items-center pr-20 pl-12 z-10"
           >
-            <InfoPanel />
+            <InfoPanel show={infoShown} />
           </motion.div>
 
           {/* Scroll hint */}
@@ -294,12 +322,9 @@ export default function Hero() {
             className="absolute bottom-10 left-1/2 -translate-x-1/2 text-slate-400 z-30 flex flex-col items-center gap-2 pointer-events-none"
           >
             <span className="text-[10px] font-mono tracking-[0.25em] uppercase">Scroll</span>
-            <motion.div
-              animate={{ y: [0, 6, 0] }}
-              transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
-            >
+            <div className="animate-nudge-down">
               <ChevronDown size={22} />
-            </motion.div>
+            </div>
           </motion.div>
         </div>
       </section>
