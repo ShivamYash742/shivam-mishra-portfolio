@@ -1,48 +1,42 @@
 'use client';
-import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { motion } from 'framer-motion';
 import { Github, ExternalLink, Check } from 'lucide-react';
+import { chipPop, columnDelay, easeOutExpo, inViewOnce, itemSlide, staggerChildren } from '@/lib/motion';
 import { projects } from '@/lib/data';
+import SectionHeader from './SectionHeader';
+import SpotlightCard from './SpotlightCard';
 
 export default function Projects() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-80px' });
-
   return (
     <section id="projects" className="py-28 px-6 bg-[#0a0a0f] relative">
       <div className="absolute right-0 top-1/2 w-[400px] h-[400px] bg-cyan-500/5 rounded-full blur-[100px] pointer-events-none" />
-      <div className="max-w-6xl mx-auto" ref={ref}>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="mb-16"
-        >
-          <span className="font-mono text-violet-400 text-sm tracking-[0.2em] uppercase">
-            What I&apos;ve built
-          </span>
-          <h2 className="text-4xl sm:text-5xl font-bold mt-2 bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
-            Projects
-          </h2>
-          <div className="w-16 h-1 bg-gradient-to-r from-violet-500 to-cyan-500 rounded-full mt-4" />
-        </motion.div>
+      <div className="max-w-6xl mx-auto">
+        <SectionHeader eyebrow="What I've built" title="Projects" />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {projects.map((project, idx) => (
-            <motion.div
+            <SpotlightCard
               key={project.name}
-              initial={{ opacity: 0, y: 40 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: idx * 0.15 }}
-              className="group relative p-7 rounded-2xl bg-white/[0.03] border border-white/[0.08] hover:border-violet-500/25 transition-all duration-300 hover:-translate-y-1 flex flex-col"
+              tilt
+              glow={`${project.accentColor}1f`}
+              className="p-7 rounded-2xl flex flex-col"
+              initial="hidden"
+              whileInView="show"
+              viewport={inViewOnce}
+              variants={{
+                hidden: { opacity: 0, y: 40 },
+                show: {
+                  opacity: 1,
+                  y: 0,
+                  transition: {
+                    duration: 0.7,
+                    delay: columnDelay(idx, 2, 0.15),
+                    ease: easeOutExpo,
+                    delayChildren: 0.3 + columnDelay(idx, 2, 0.15),
+                  },
+                },
+              }}
             >
-              <div
-                className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                style={{
-                  background: `radial-gradient(400px circle at 50% 0%, ${project.accentColor}08, transparent)`,
-                }}
-              />
-
               <div className="mb-5 relative z-10">
                 <div className="flex items-start justify-between mb-2">
                   <h3 className="text-xl font-bold text-white group-hover:text-violet-300 transition-colors">
@@ -54,7 +48,7 @@ export default function Projects() {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`${project.name} on GitHub`}
-                      className="text-slate-500 hover:text-violet-400 transition-colors"
+                      className="text-slate-500 hover:text-violet-400 hover:scale-125 transition-all duration-200"
                     >
                       <Github size={18} aria-hidden="true" />
                     </a>
@@ -64,7 +58,7 @@ export default function Projects() {
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label={`${project.name} live demo`}
-                        className="text-slate-500 hover:text-cyan-400 transition-colors"
+                        className="text-slate-500 hover:text-cyan-400 hover:scale-125 hover:rotate-12 transition-all duration-200"
                       >
                         <ExternalLink size={18} aria-hidden="true" />
                       </a>
@@ -80,26 +74,38 @@ export default function Projects() {
                 {project.description}
               </p>
 
-              <ul className="space-y-2 mb-6 relative z-10 flex-1">
+              <motion.ul
+                variants={staggerChildren(0.08, 0)}
+                className="space-y-2 mb-6 relative z-10 flex-1"
+              >
                 {project.points.slice(0, 4).map((point, i) => (
-                  <li key={i} className="flex items-start gap-2 text-slate-400 text-sm">
+                  <motion.li
+                    key={i}
+                    variants={itemSlide}
+                    className="flex items-start gap-2 text-slate-400 text-sm"
+                  >
                     <Check size={14} className="text-violet-400 mt-0.5 shrink-0" />
                     <span>{point}</span>
-                  </li>
+                  </motion.li>
                 ))}
-              </ul>
+              </motion.ul>
 
-              <div className="flex flex-wrap gap-2 relative z-10">
+              <motion.div
+                variants={staggerChildren(0.04, 0.1)}
+                className="flex flex-wrap gap-2 relative z-10"
+              >
                 {project.stack.map((tech) => (
-                  <span
+                  <motion.span
                     key={tech}
-                    className="px-2.5 py-1 text-xs font-medium rounded-lg text-slate-300 border border-white/[0.08] bg-white/[0.04]"
+                    variants={chipPop}
+                    whileHover={{ y: -2, scale: 1.06 }}
+                    className="px-2.5 py-1 text-xs font-medium rounded-lg text-slate-300 border border-white/[0.08] bg-white/[0.04] transition-colors duration-200 hover:border-white/25 hover:text-white cursor-default"
                   >
                     {tech}
-                  </span>
+                  </motion.span>
                 ))}
-              </div>
-            </motion.div>
+              </motion.div>
+            </SpotlightCard>
           ))}
         </div>
       </div>

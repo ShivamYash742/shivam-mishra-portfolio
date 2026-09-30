@@ -1,8 +1,48 @@
 'use client';
-import { useRef } from 'react';
+import { useEffect, useRef, type MutableRefObject, type ReactNode } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Stars, Float } from '@react-three/drei';
+import { useReducedMotion } from 'framer-motion';
 import * as THREE from 'three';
+
+/** Pointer position in -1..1 screen space, tracked on the window so it works across the whole hero. */
+function usePointer() {
+  const pointer = useRef({ x: 0, y: 0 });
+  useEffect(() => {
+    const onMove = (e: PointerEvent) => {
+      pointer.current.x = (e.clientX / window.innerWidth) * 2 - 1;
+      pointer.current.y = (e.clientY / window.innerHeight) * 2 - 1;
+    };
+    window.addEventListener('pointermove', onMove, { passive: true });
+    return () => window.removeEventListener('pointermove', onMove);
+  }, []);
+  return pointer;
+}
+
+/**
+ * Turns its children a little toward the cursor, with a slow idle sway so touch
+ * devices (which have no cursor) still feel alive. Nearer layers get a larger
+ * `strength` than distant ones, which is what sells the depth.
+ */
+function ParallaxRig({
+  pointer,
+  strength,
+  children,
+}: {
+  pointer: MutableRefObject<{ x: number; y: number }>;
+  strength: number;
+  children: ReactNode;
+}) {
+  const ref = useRef<THREE.Group>(null!);
+  useFrame((state, delta) => {
+    const t = state.clock.elapsedTime;
+    const targetY = pointer.current.x * strength + Math.sin(t * 0.25) * 0.04;
+    const targetX = pointer.current.y * strength * 0.7 + Math.cos(t * 0.2) * 0.03;
+    ref.current.rotation.y = THREE.MathUtils.damp(ref.current.rotation.y, targetY, 2.5, delta);
+    ref.current.rotation.x = THREE.MathUtils.damp(ref.current.rotation.x, targetX, 2.5, delta);
+  });
+  return <group ref={ref}>{children}</group>;
+}
 
 function GlowCore() {
   const ref = useRef<THREE.Mesh>(null!);
@@ -41,8 +81,9 @@ function Ring({
   opacity?: number;
 }) {
   const ref = useRef<THREE.Mesh>(null!);
-  useFrame(() => {
-    ref.current.rotation.z += speed;
+  useFrame((_, delta) => {
+    // Speeds are radians per frame at 60fps; scale by real elapsed time so 120Hz screens don't spin 2x.
+    ref.current.rotation.z += speed * Math.min(delta, 0.05) * 60;
   });
   return (
     <mesh ref={ref} rotation={new THREE.Euler(...rotation)}>
@@ -121,44 +162,67 @@ function PulseRing({ radius, speed }: { radius: number; speed: number }) {
   );
 }
 
-export default function Hero3D() {
+function Scene() {
+  const pointer = usePointer();
+
   return (
-    <Canvas camera={{ position: [0, 0, 9], fov: 42 }}>
+    <>
       <ambientLight intensity={0.4} />
       <pointLight position={[6, 6, 5]} intensity={6} color="#7C3AED" />
       <pointLight position={[-6, -4, 5]} intensity={3} color="#06B6D4" />
       <pointLight position={[0, 0, 5]} intensity={2.5} color="#8B5CF6" />
 
-      <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={0.5} />
+      {/* Far layer barely moves; near layer moves most */}
+      <ParallaxRig pointer={pointer} strength={0.04}>
+        <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={0.5} />
+      </ParallaxRig>
 
-      <GlowCore />
-      <PulseRing radius={2.0} speed={0.8} />
-      <PulseRing radius={2.4} speed={-0.6} />
+      <ParallaxRig pointer={pointer} strength={0.16}>
+        <GlowCore />
+        <PulseRing radius={2.0} speed={0.8} />
+        <PulseRing radius={2.4} speed={-0.6} />
 
-      {/* Multi-angle orbiting rings */}
-      <Ring rotation={[0.3, 0, 0]} color="#7C3AED" radius={2.3} speed={0.003} />
-      <Ring rotation={[1.2, 0.3, 0]} color="#06B6D4" radius={2.9} speed={-0.002} />
-      <Ring rotation={[0.7, 1.0, 0.4]} color="#8B5CF6" radius={3.5} speed={0.0018} />
-      <Ring rotation={[1.5, 0.5, 1.0]} color="#22D3EE" radius={4.0} speed={-0.0012} opacity={0.45} />
-      <Ring rotation={[0.2, 1.5, 0.8]} color="#A78BFA" radius={4.6} speed={0.0009} opacity={0.3} />
+        {/* Multi-angle orbiting rings */}
+        <Ring rotation={[0.3, 0, 0]} color="#7C3AED" radius={2.3} speed={0.003} />
+        <Ring rotation={[1.2, 0.3, 0]} color="#06B6D4" radius={2.9} speed={-0.002} />
+        <Ring rotation={[0.7, 1.0, 0.4]} color="#8B5CF6" radius={3.5} speed={0.0018} />
+        <Ring rotation={[1.5, 0.5, 1.0]} color="#22D3EE" radius={4.0} speed={-0.0012} opacity={0.45} />
+        <Ring rotation={[0.2, 1.5, 0.8]} color="#A78BFA" radius={4.6} speed={0.0009} opacity={0.3} />
 
-      {/* Orbiting particles on ring paths */}
-      <OrbitingParticle radius={2.3} speed={1.2} offset={0} yTilt={0.4} color="#A78BFA" />
-      <OrbitingParticle radius={2.3} speed={1.2} offset={Math.PI} yTilt={0.4} color="#7C3AED" />
-      <OrbitingParticle radius={2.9} speed={-0.85} offset={1.5} yTilt={1.1} color="#06B6D4" />
-      <OrbitingParticle radius={2.9} speed={-0.85} offset={4.5} yTilt={1.1} color="#22D3EE" />
-      <OrbitingParticle radius={3.5} speed={1.0} offset={3} yTilt={0.9} color="#8B5CF6" />
-      <OrbitingParticle radius={3.5} speed={1.0} offset={0.5} yTilt={2.0} color="#A78BFA" size={0.05} />
+        {/* Orbiting particles on ring paths */}
+        <OrbitingParticle radius={2.3} speed={1.2} offset={0} yTilt={0.4} color="#A78BFA" />
+        <OrbitingParticle radius={2.3} speed={1.2} offset={Math.PI} yTilt={0.4} color="#7C3AED" />
+        <OrbitingParticle radius={2.9} speed={-0.85} offset={1.5} yTilt={1.1} color="#06B6D4" />
+        <OrbitingParticle radius={2.9} speed={-0.85} offset={4.5} yTilt={1.1} color="#22D3EE" />
+        <OrbitingParticle radius={3.5} speed={1.0} offset={3} yTilt={0.9} color="#8B5CF6" />
+        <OrbitingParticle radius={3.5} speed={1.0} offset={0.5} yTilt={2.0} color="#A78BFA" size={0.05} />
 
-      {/* Floating gems in background */}
-      <FloatingGem position={[-3.8, 1.8, -1.5]} color="#7C3AED" />
-      <FloatingGem position={[3.5, -2.0, -0.8]} color="#06B6D4" />
-      <FloatingGem position={[-2.2, -3.0, 1.2]} color="#A78BFA" />
-      <FloatingGem position={[2.8, 2.5, -2.0]} color="#22D3EE" />
-      <FloatingGem position={[-4.2, -0.8, 0.8]} color="#8B5CF6" />
-      <FloatingGem position={[1.2, 3.8, -1.5]} color="#7C3AED" />
-      <FloatingGem position={[3.8, 0.5, 1.0]} color="#A78BFA" />
-      <FloatingGem position={[-1.5, 3.2, -0.5]} color="#06B6D4" />
+        {/* Floating gems in background */}
+        <FloatingGem position={[-3.8, 1.8, -1.5]} color="#7C3AED" />
+        <FloatingGem position={[3.5, -2.0, -0.8]} color="#06B6D4" />
+        <FloatingGem position={[-2.2, -3.0, 1.2]} color="#A78BFA" />
+        <FloatingGem position={[2.8, 2.5, -2.0]} color="#22D3EE" />
+        <FloatingGem position={[-4.2, -0.8, 0.8]} color="#8B5CF6" />
+        <FloatingGem position={[1.2, 3.8, -1.5]} color="#7C3AED" />
+        <FloatingGem position={[3.8, 0.5, 1.0]} color="#A78BFA" />
+        <FloatingGem position={[-1.5, 3.2, -0.5]} color="#06B6D4" />
+      </ParallaxRig>
+    </>
+  );
+}
+
+export default function Hero3D() {
+  // "demand" renders a single still frame and then stops the loop, so visitors who
+  // ask for reduced motion get the scene without anything moving.
+  const reduceMotion = useReducedMotion();
+
+  return (
+    <Canvas
+      camera={{ position: [0, 0, 9], fov: 42 }}
+      dpr={[1, 1.75]}
+      frameloop={reduceMotion ? 'demand' : 'always'}
+    >
+      <Scene />
     </Canvas>
   );
 }

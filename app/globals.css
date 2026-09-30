@@ -242,6 +242,80 @@ body {
   animation: cursor-blink 0.8s step-end infinite;
 }
 
+/* ─── Portfolio motion utilities ─────────────────────────────────────────────
+   Endless loops live in CSS so they run on the compositor instead of competing
+   with the WebGL scene for main-thread time. */
+
+/* Orbit — spin at a per-element speed: `animate-orbit [--orbit-duration:25s]` */
+.animate-orbit {
+  animation: spin-slow var(--orbit-duration, 20s) linear infinite;
+}
+.animate-orbit-reverse {
+  animation-direction: reverse;
+}
+
+/* Sonar ping — ring that expands and fades */
+@keyframes ring-ping {
+  0% { transform: scale(1); opacity: 0.5; }
+  80%, 100% { transform: scale(1.5); opacity: 0; }
+}
+
+.animate-ring-ping {
+  animation: ring-ping 3.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Gentle levitation */
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float-y {
+  animation: float-y 6s ease-in-out infinite;
+}
+
+/* Scroll-hint chevron nudge */
+@keyframes nudge-down {
+  0%, 100% { transform: translateY(0); opacity: 0.6; }
+  50% { transform: translateY(7px); opacity: 1; }
+}
+
+.animate-nudge-down {
+  animation: nudge-down 1.6s ease-in-out infinite;
+}
+
+/* Gradient text that slowly drifts (needs a from-x via-y to-x gradient to loop seamlessly) */
+@keyframes gradient-drift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.animate-gradient-drift {
+  background-size: 200% 200%;
+  animation: gradient-drift 8s ease-in-out infinite;
+}
+
+/* Button shine — a soft highlight sweeps across on hover */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.btn-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.22) 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.btn-shine:hover::after {
+  transform: translateX(120%);
+}
+
 /* Diagonal hazard stripes */
 .hazard-stripes {
   background-image: repeating-linear-gradient(
@@ -271,7 +345,20 @@ body {
   .animate-text-glow,
   .animate-aurora,
   .animate-stamp,
-  .animate-cursor-blink {
+  .animate-cursor-blink,
+  .animate-orbit,
+  .animate-ring-ping,
+  .animate-float-y,
+  .animate-nudge-down,
+  .animate-gradient-drift {
     animation: none;
+  }
+
+  .btn-shine::after {
+    display: none;
+  }
+
+  html {
+    scroll-behavior: auto;
   }
 }
